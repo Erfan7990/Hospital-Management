@@ -11,4 +11,8 @@
               parent="menu_patient_root"
               sequence="0"/>
 
+    <menuitem id="menu_appointment_master"
+              name="Appointments"
+              parent="menu_patient_root"
+              sequence="0"/>
 </odoo>
