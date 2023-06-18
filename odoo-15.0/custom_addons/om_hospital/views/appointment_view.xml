@@ -16,11 +16,18 @@
         <field name="name">hospital.appointment.tree</field>
         <field name="model">hospital.appointment</field>
         <field name="arch" type="xml">
-            <tree>
+            <tree decoration-success="state == 'done'" multi_edit="1" sample="1">
                 <field name="patient_id"/>
-                <field name="gender"/>
+                <field name="doctor_id" widget="many2one_avatar_user"/>
+                <field name="gender" optional="hide"/>
+                <field name="reference" optional="hide"/>
                 <field name="appointment_time"/>
-                <field name="booking_date"/>
+                <field name="booking_date" optional="show"/>
+                <field name="activity_ids" widget="list_activity"/>
+                <!-- badge widget decoration -->
+                <field name="state" decoration-success="state == 'done'" decoration-info="state == 'draft'"
+                       decoration-warning="state == 'in_consultant'" decoration-danger="state == 'cancelled'"
+                       widget="badge"/>
             </tree>
         </field>
     </record>
@@ -31,6 +38,20 @@
         <field name="model">hospital.appointment</field>
         <field name="arch" type="xml">
             <form>
+                <!--StatusBar-->
+                <header>
+                    <!--controlling statusbar using buttons-->
+                    <button name="action_in_consultant_btn" string="In Consultant" type="object" states="draft"
+                            class="oe_highlight"/>
+                    <button name="action_done_btn" string="Make as Done" type="object" states="in_consultant"
+                            class="oe_highlight"/>
+                    <button name="action_cancelled_btn" string="Cancelled" type="object" states="draft,in_consultant"/>
+                    <button name="action_draft_btn" string="Reset as Draft" type="object" states="cancelled"
+                            class="oe_highlight"/>
+                    <!-- options="{'clickable':' 1'}"-->
+                    <field name="state" widget="statusbar" nolabel="1"
+                           statusbar_visible="draft,in_consultant,done"/>
+                </header>
                 <sheet>
 
                     <field name="priority" widget="priority"/>
@@ -43,6 +64,15 @@
                         <group>
                             <field name="appointment_time"/>
                             <field name="booking_date"/>
+                            <field name="doctor_id" widget="many2one_avatar"/>
+                        </group>
+
+                        <group>
+                            <button name="test_action" string="Object Button" class="oe_highlight" type="object"/>
+                            <button name="%(om_hospital.action_hospital_patient)d" string="Action Button"
+                                    help="On clicking this button, you will be redirect to the Patient Information"
+                                    confirm="Are you sure to open patient Information?"
+                                    class="oe_highlight" type="action"/>
 
                         </group>
 
@@ -50,13 +80,29 @@
 
                     <notebook>
                         <page string="Prescription" name="prescription">
-                            <field name="prescription" placeholder="Write Patient Prescription  "></field>
+                            <field name="prescription" placeholder="Write Patient Prescription"
+                                   options="{'collaborative': true, 'resizable': true}"></field>
                         </page>
                         <page string="Patient Test Report" name="patient_test_report"></page>
                     </notebook>
 
                     <notebook>
-                        <page string="Pharmacy" name="pharmacy"></page>
+                        <page string="Pharmacy" name="pharmacy">
+                            <field name="pharmacy_line_ids">
+                                <tree editable="bottom">
+                                    <field name="product_id"/>
+                                    <field name="price_unit"/>
+                                    <field name="quantity"/>
+                                </tree>
+                                <form>
+                                    <group>
+                                        <field name="product_id"/>
+                                        <field name="price_unit"/>
+                                        <field name="quantity"/>
+                                    </group>
+                                </form>
+                            </field>
+                        </page>
                         <page string="Do/Not to Do" name="do_not_to_do"></page>
                     </notebook>
                 </sheet>
