@@ -11,10 +11,12 @@
     ],
     'data': [
         'security/ir.model.access.csv',
+        'wizard/cancel_appointment_wizard.xml',
         'views/menu.xml',
         'views/patient.xml',
         'views/female_patient_view.xml',
         'views/appointment_view.xml',
+        'views/patient_tag_view.xml',
 
     ],
     'demo': [],

@@ -2,7 +2,7 @@ from odoo import api, models, fields
 
 
 
-class PatientAccount(models.Model):
+class PatientAppointment(models.Model):
     _name = 'hospital.appointment'
     _inherit = ['mail.thread', 'mail.activity.mixin']
     _description = 'Hospital Patient Appointment Information'
@@ -14,6 +14,7 @@ class PatientAccount(models.Model):
     appointment_time = fields.Datetime(string="Appointment Date")
     booking_date = fields.Date(string="Booking Date", default=fields.Datetime.now)
     reference = fields.Char(string='Reference', help='Reference from the patient records')
+    age = fields.Char(string='Age')
     prescription = fields.Html(string='prescription')
     priority = fields.Selection([
         ('0', 'Normal'),
@@ -30,9 +31,17 @@ class PatientAccount(models.Model):
     ], string="Status", default='draft', required=True)
     doctor_id = fields.Many2one('res.users', string='Doctor')
     pharmacy_line_ids = fields.One2many('hospital.appointment.line', 'appointment_id', string='Pharmacy Line')
+    hide_sales_price = fields.Boolean(string='Hide Sales Price')
+
+
     @api.onchange('patient_id')
     def onchange_patient_id(self):
         self.reference = self.patient_id.reference
+
+    @api.onchange('patient_id')
+    def onchange_patient_age(self):
+        self.age = self.patient_id.age
+
 
     def test_action(self):
         print('Button Clicked............')

@@ -11,6 +11,25 @@
         </field>
     </record>
 
+    <!--    Create Activity schedule-->
+    <record id="view_hospital_appointment_activity" model="ir.ui.view">
+        <field name="name">hospital.appointment.activity</field>
+        <field name="model">hospital.appointment</field>
+        <field name="arch" type="xml">
+            <activity string="Appointment">
+                <field name="patient_id"/>
+                <templates>
+                    <div t-name="activity-box">
+                        <img t-att-src="activity_image('hospital.patient', 'image', record.patient_id.raw_value)" t-att-title="record.patient_id.value" t-att-alt="record.patient_id.value"/>
+                        <div>
+                            <field name="patient_id" display="full"/>
+                        </div>
+                    </div>
+                </templates>
+            </activity>
+        </field>
+    </record>
+
     <!--    create Tree View -->
     <record id="view_hospital_appointment_tree" model="ir.ui.view">
         <field name="name">hospital.appointment.tree</field>
@@ -20,6 +39,7 @@
                 <field name="patient_id"/>
                 <field name="doctor_id" widget="many2one_avatar_user"/>
                 <field name="gender" optional="hide"/>
+                <field name="age"/>
                 <field name="reference" optional="hide"/>
                 <field name="appointment_time"/>
                 <field name="booking_date" optional="show"/>
@@ -59,22 +79,22 @@
                         <group>
                             <field name="patient_id"/>
                             <field name="gender"/>
+                            <field name="age"/>
                             <field name="reference"/>
+                            <field name="hide_sales_price" groups="base.group_no_one"/>
                         </group>
                         <group>
                             <field name="appointment_time"/>
                             <field name="booking_date"/>
                             <field name="doctor_id" widget="many2one_avatar"/>
-                        </group>
-
-                        <group>
-                            <button name="test_action" string="Object Button" class="oe_highlight" type="object"/>
+                            <button name="test_action" string="Object Button" class="oe_highlight" type="object"
+                                    groups="base.group_no_one"/>
                             <button name="%(om_hospital.action_hospital_patient)d" string="Action Button"
                                     help="On clicking this button, you will be redirect to the Patient Information"
                                     confirm="Are you sure to open patient Information?"
-                                    class="oe_highlight" type="action"/>
-
+                                    class="oe_highlight" type="action" groups="base.group_no_one"/>
                         </group>
+
 
                     </group>
 
@@ -91,13 +111,15 @@
                             <field name="pharmacy_line_ids">
                                 <tree editable="bottom">
                                     <field name="product_id"/>
-                                    <field name="price_unit"/>
+                                    <field name="price_unit"
+                                           attrs="{'column_invisible':[('parent.hide_sales_price', '=', True)]}"/>
                                     <field name="quantity"/>
                                 </tree>
                                 <form>
                                     <group>
                                         <field name="product_id"/>
-                                        <field name="price_unit"/>
+                                        <field name="price_unit"
+                                               attrs="{'column_invisible':[('parent.hide_sales_price', '=', True)]}"/>
                                         <field name="quantity"/>
                                     </group>
                                 </form>
@@ -122,7 +144,7 @@
         <field name="name">Appointment</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">hospital.appointment</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">tree,form,activity</field>
         <field name="context">{}</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">

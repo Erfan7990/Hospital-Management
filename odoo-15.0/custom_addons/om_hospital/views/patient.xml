@@ -14,8 +14,8 @@
                 <!--    filtering the search menu-->
                 <filter name="filter_male" string="Male" domain="[('gender', '=', 'male')]"/>
                 <filter name="filter_female" string="Female" domain="[('gender', '=', 'female')]"/>
-<!--                <separator/>-->
-<!--                <filter name="filter_kids" string="Kids" domain="[('age', '&lt;=', 5)]"/>-->
+                <!--                <separator/>-->
+                <!--                <filter name="filter_kids" string="Kids" domain="[('age', '&lt;=', 5)]"/>-->
 
                 <!-- Archived -->
                 <separator/>
@@ -34,6 +34,8 @@
         </field>
     </record>
 
+
+
     <!--    create Tree View -->
     <record id="view_hospital_patient_tree" model="ir.ui.view">
         <field name="name">hospital.patient.tree</field>
@@ -44,6 +46,8 @@
                 <field name="date_of_birth"/>
                 <field name="age"/>
                 <field name="gender"/>
+                <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}"/>
+                <field name="appointment_doctor"/>
                 <field name="patient_problem"/>
             </tree>
         </field>
@@ -56,18 +60,23 @@
         <field name="arch" type="xml">
             <form>
                 <sheet>
+                    <field name="image" widget="image" class="oe_avatar"/>
                     <group>
                         <group>
                             <field name="name"/>
                             <field name="reference"/>
                             <field name="date_of_birth"/>
                             <field name="age"/>
+                            <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}"/>
+
 
                         </group>
                         <group>
                             <field name="gender"/>
                             <field name="patient_problem"/>
                             <field name="active" invisible="1"/>
+                            <field name="appointment_id"/>
+                            <field name="appointment_doctor"/>
                         </group>
 
                     </group>

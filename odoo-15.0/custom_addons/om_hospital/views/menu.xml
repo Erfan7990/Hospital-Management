@@ -14,5 +14,12 @@
     <menuitem id="menu_appointment_master"
               name="Appointments"
               parent="menu_patient_root"
-              sequence="0"/>
+              sequence="10"/>
+
+    <menuitem id="menu_patient_tag_master"
+              name="Configurations"
+              parent="menu_patient_root"
+              sequence="20"/>
+
+
 </odoo>
