@@ -64,6 +64,11 @@ class PatientAppointment(models.Model):
         for rec in self:
             rec.state = 'cancelled'
 
+    def action_cancellation(self):
+        action = self.env.ref('om_hospital.action_cancel_appointment').read()[0]
+        return action
+
+
     def action_draft_btn(self):
         for rec in self:
             rec.state = 'draft'

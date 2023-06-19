@@ -20,7 +20,8 @@
                 <field name="patient_id"/>
                 <templates>
                     <div t-name="activity-box">
-                        <img t-att-src="activity_image('hospital.patient', 'image', record.patient_id.raw_value)" t-att-title="record.patient_id.value" t-att-alt="record.patient_id.value"/>
+                        <img t-att-src="activity_image('hospital.patient', 'image', record.patient_id.raw_value)"
+                             t-att-title="record.patient_id.value" t-att-alt="record.patient_id.value"/>
                         <div>
                             <field name="patient_id" display="full"/>
                         </div>
@@ -65,7 +66,15 @@
                             class="oe_highlight"/>
                     <button name="action_done_btn" string="Make as Done" type="object" states="in_consultant"
                             class="oe_highlight"/>
-                    <button name="action_cancelled_btn" string="Cancelled" type="object" states="draft,in_consultant"/>
+                    <!-- <button name="action_cancelled_btn" string="Cancelled" type="object" states="draft,in_consultant"/>-->
+
+                    <!-- cancel button for wizard popup-->
+                    <!-- using type="action"-->
+                    <button name="%(om_hospital.action_cancel_appointment)d" string="Cancelled" type="action"
+                            states="draft,in_consultant"/>
+                    <!--Using type="object" -->
+                    <button name="action_cancellation" string="Cancel" type="object"
+                            states="draft,in_consultant"/>
                     <button name="action_draft_btn" string="Reset as Draft" type="object" states="cancelled"
                             class="oe_highlight"/>
                     <!-- options="{'clickable':' 1'}"-->
