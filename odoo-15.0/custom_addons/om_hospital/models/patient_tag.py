@@ -6,5 +6,5 @@ class PatientTag(models.Model):
     _description = 'Hospital Patient Tag'
 
     name = fields.Char(string='Name')
-    active = fields.Boolean(string='Active')
+    active = fields.Boolean(string='Active', default='True')
     color = fields.Integer(string='Color')

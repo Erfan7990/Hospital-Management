@@ -961,6 +961,7 @@ class SaleOrder(models.Model):
         self.write({'state': 'sale'})
 
     def _action_confirm(self):
+
         """ Implementation of additionnal mecanism of Sales Order confirmation.
             This method should be extended when the confirmation should generated
             other documents. In this method, the SO are in 'sale' state (not yet 'done').
@@ -980,6 +981,7 @@ class SaleOrder(models.Model):
         }
 
     def action_confirm(self):
+        print("Orginal function.......")
         if self._get_forbidden_state_confirm() & set(self.mapped('state')):
             raise UserError(_(
                 'It is not allowed to confirm an order in the following states: %s'

@@ -20,6 +20,11 @@
               name="Configurations"
               parent="menu_patient_root"
               sequence="20"/>
-
+ <!--    child submenu   -->
+    <menuitem id="menu_patient_tag"
+              name="Tags"
+              action="action_patient_tag"
+              parent="menu_patient_tag_master"
+              sequence="0"/>
 
 </odoo>

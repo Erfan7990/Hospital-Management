@@ -10,7 +10,11 @@
         'mail', 'product'
     ],
     'data': [
+
         'security/ir.model.access.csv',
+        'data/patient_tag_data.xml',
+        'data/patient.tag.csv',
+        'data/sequence_data.xml',
         'wizard/cancel_appointment_wizard.xml',
         'views/menu.xml',
         'views/patient.xml',
