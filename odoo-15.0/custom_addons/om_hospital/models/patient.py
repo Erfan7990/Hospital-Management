@@ -16,17 +16,41 @@ class PatientAccount(models.Model):
     gender = fields.Selection([('male', "Male"), ('female', 'Female')])
     patient_problem = fields.Char(string='Patient Problem')
     active = fields.Boolean(string='Active', default='True')
-    appointment_id = fields.Many2one('hospital.appointment', string='Appointment')
-    appointment_doctor = fields.Char(string="Appointment Doctor")
+    appointment_id = fields.One2many('hospital.appointment', 'patient_id', string='Appointment')
+    appointment_count = fields.Integer(string='Appointment Count', compute='_compute_appointment_count', store=True)
+    # appointment_doctor = fields.Char(string="Appointment Doctor",  compute="_compute_appointment_doctor", store=True)
     image = fields.Image(string="Image")
     tag_ids = fields.Many2many('patient.tag', string='Tags')
+    parent = fields.Char(string="Parent")
+    marital_status = fields.Selection([
+        ('married', 'Married'),
+        ('single', 'Single'),
+    ], string="Marital Status", tracking=True)
+    partner_name = fields.Char(string='Partner Name')
+
+
+
+    @api.depends('appointment_id')
+    def _compute_appointment_count(self):
+        for res in self:
+            res.appointment_count = self.env['hospital.appointment'].search_count([('patient_id', '=', res.id)])
+
+    # def _compute_appointment_doctor(self):
+    #     for res in self:
+    #         res.appointment_doctor = self.env['hospital.appointment'].search_name([('patient_id', '=', res.id)])
+
+
+
+        # for i in self.appointment_id:
+        #     self.appointment_doctor = i.doctor_id
+        # self.appointment_id = self.appointment_id.doctor_id
 
     # ---- Constrains in odoo -------
     @api.constrains('date_of_birth')
     def _check_date_of_birth(self):
         for res in self:
             if res.date_of_birth and res.date_of_birth > fields.Date.today():
-                raise ValidationError(_(" "))
+                raise ValidationError(_("The entered date of birth is not Correct !"))
 
     # ------- Override Create method and generate the sequence of Patient -----------
     @api.model
@@ -52,12 +76,12 @@ class PatientAccount(models.Model):
             else:
                 res.age = 0
 
-    @api.onchange('appointment_id')
-    def onchange_appointment_doctor(self):
-        # for res in self:
-        for i in self.appointment_id:
-            self.appointment_doctor = i.doctor_id
-        # self.appointment_id = self.appointment_id.doctor_id
+    # ----- use @api.ondelete operation-----------
+    @api.ondelete(at_uninstall=False)
+    def _check_appointment(self):
+        for rec in self:
+           if rec.appointment_id:
+               raise ValidationError(_("You cannot delete patient Information"))
 
     # ----77. Name get function----
     def name_get(self):

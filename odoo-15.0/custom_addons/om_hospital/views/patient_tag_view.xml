@@ -16,7 +16,7 @@
         <field name="name">patient.tag.tree</field>
         <field name="model">patient.tag</field>
         <field name="arch" type="xml">
-            <tree>
+            <tree export_xlsx="0">
                 <field name="name"/>
                 <field name="active"/>
                 <field name="color" widget="color_picker"/>

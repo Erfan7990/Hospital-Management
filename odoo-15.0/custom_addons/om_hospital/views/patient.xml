@@ -35,21 +35,22 @@
     </record>
 
 
-
     <!--    create Tree View -->
     <record id="view_hospital_patient_tree" model="ir.ui.view">
         <field name="name">hospital.patient.tree</field>
         <field name="model">hospital.patient</field>
         <field name="arch" type="xml">
-            <tree>
+            <tree export_xlsx="0">
                 <field name="reference"/>
                 <field name="name" string="Patient Name"/>
                 <field name="date_of_birth"/>
                 <field name="age"/>
                 <field name="gender"/>
                 <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}"/>
-                <field name="appointment_doctor"/>
                 <field name="patient_problem"/>
+                <!--                <field name="appointment_doctor"/>-->
+                <field name="appointment_count"/>
+
             </tree>
         </field>
     </record>
@@ -61,31 +62,44 @@
         <field name="arch" type="xml">
             <form>
                 <sheet>
-                     <div class="oe_title">
+                    <field name="image" widget="image" class="oe_avatar"/>
+                    <div class="oe_title">
+                        <h4>
+                            <field name="reference" readonly="1"/>
+                        </h4>
                         <h1>
-                            <field name="reference"/>
+                            <label for="name" string="Name" class="oe_edit_only"/>
+                            <field name="name"/>
                         </h1>
-                         <field name="image" widget="image" class="oe_avatar"/>
                     </div>
 
                     <group>
                         <group>
-                            <field name="name"/>
+
 
                             <field name="date_of_birth"/>
                             <field name="age"/>
-                            <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}"/>
 
+                            <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}"/>
+                            <field name="appointment_count"/>
 
                         </group>
                         <group>
                             <field name="gender"/>
                             <field name="patient_problem"/>
                             <field name="active" invisible="1"/>
-                            <field name="appointment_id"/>
-                            <field name="appointment_doctor"/>
+                            <!--<field name="appointment_id"/>-->
+                            <!--                            <field name="appointment_doctor"/>-->
                         </group>
 
+                    </group>
+                    <group string="Others Information" name="other_info">
+                        <group>
+                            <field name="parent" attrs="{'invisible': [('age','>','18')]}"/>
+                            <field name="marital_status" attrs="{'invisible': [('age','&lt;','18')]}"/>
+                            <!--'required': [('marital_status','!=','married')]-->
+                            <field name="partner_name" attrs="{'readonly': [('marital_status','!=','married')]}"/>
+                        </group>
                     </group>
                 </sheet>
                 <!--  Adding Chatter -->

@@ -1,5 +1,5 @@
-from odoo import api, models, fields
-
+from odoo import api, models, fields, _
+from odoo.exceptions import ValidationError
 
 
 class PatientAppointment(models.Model):
@@ -10,7 +10,7 @@ class PatientAppointment(models.Model):
 
 
     patient_appointment_ids = fields.Char(string='Appointment Id')
-    patient_id = fields.Many2one('hospital.patient', string='Patient')
+    patient_id = fields.Many2one('hospital.patient', string='Patient', ondelete="cascade")
     gender = fields.Selection([('male', "Male"), ('female', 'Female')], related='patient_id.gender',
                               help='Enter the gender of a patient')
     appointment_time = fields.Datetime(string="Appointment Date")
@@ -67,7 +67,8 @@ class PatientAppointment(models.Model):
     # Creating button to control statusbar
     def action_in_consultant_btn(self):
         for rec in self:
-            rec.state = 'in_consultant'
+            if rec.state == 'draft':
+                rec.state = 'in_consultant'
     def action_done_btn(self):
         for rec in self:
             rec.state = 'done'
@@ -83,6 +84,12 @@ class PatientAppointment(models.Model):
     def action_draft_btn(self):
         for rec in self:
             rec.state = 'draft'
+
+
+    def unlink(self):
+        if self.state != 'draft':
+            raise ValidationError(_("You can only delete in Draft state !"))
+        return super(PatientAppointment, self).unlink()
 
 
 class Appointment_pharmacy_Lines(models.Model):

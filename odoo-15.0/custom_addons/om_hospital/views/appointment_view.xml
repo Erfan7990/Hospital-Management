@@ -36,7 +36,10 @@
         <field name="name">hospital.appointment.tree</field>
         <field name="model">hospital.appointment</field>
         <field name="arch" type="xml">
-            <tree decoration-success="state == 'done'" multi_edit="1" sample="1">
+            <tree decoration-success="state == 'done'" multi_edit="1" sample="1" export_xlsx="0">
+                <header>
+                    <button name="action_in_consultant_btn" string="In Consultant" type="object" class="oe_highlight"/>
+                </header>
                 <field name="patient_appointment_ids"/>
                 <field name="patient_id"/>
                 <field name="doctor_id" widget="many2one_avatar_user"/>
@@ -50,6 +53,21 @@
                 <field name="state" decoration-success="state == 'done'" decoration-info="state == 'draft'"
                        decoration-warning="state == 'in_consultant'" decoration-danger="state == 'cancelled'"
                        widget="badge"/>
+
+                <button name="action_done_btn" type="object"
+                        attrs="{'invisible': [('state', '!=', 'in_consultant')]}"
+                        class="fa fa-check btn-success"/>
+
+                <button name="%(om_hospital.action_cancel_appointment)d" type="action"
+                        attrs="{'invisible': [('state', 'not in', ('draft','in_consultant'))]}"
+                        class="fa fa-times btn-danger"
+                        context="{'hide_appointment': 1}"/>
+
+<!--                <groupby name="patient_id">-->
+<!--                    <button name="action_test" string="Click Me" type="object" />-->
+<!--                    <button name="edit" string="Edit" type="edit" />-->
+<!--                </groupby>-->
+
             </tree>
         </field>
     </record>
@@ -74,8 +92,8 @@
                     <!-- using type="action"-->
                     <!--                    context="{'default_appointment_id': active_id}"-->
                     <button name="%(om_hospital.action_cancel_appointment)d" string="Cancelled" type="action"
-                        context="{'hide_appointment': 1}"
-                            states="draft,in_consultant"/>
+                            states="draft,in_consultant"
+                            context="{'hide_appointment': 1}"/>
 
                     <!--Using type="object" -->
                     <!--                    <button name="action_cancellation" string="Cancel" type="object"-->
