@@ -1,5 +1,7 @@
 import datetime
-from odoo import api, fields, models
+from odoo import api, fields, models, _
+from odoo.exceptions import ValidationError
+
 
 class CancelAppointmentWizard(models.TransientModel):
     _name = 'cancel.appointment.wizard'
@@ -10,6 +12,7 @@ class CancelAppointmentWizard(models.TransientModel):
     def default_get(self, fields_list):
         res = super(CancelAppointmentWizard, self).default_get(fields_list)
         res['cancel_date'] = datetime.date.today()
+        res['appointment_id'] = self.env.context.get('active_id')
         return res
 
     appointment_id = fields.Many2one('hospital.appointment', string='Appointment')
@@ -18,4 +21,5 @@ class CancelAppointmentWizard(models.TransientModel):
 
 
     def action_cancel(self):
-        return
+        if self.appointment_id.booking_date == fields.Date.today():
+            raise ValidationError(_("Sorry, cancellation is not allowed on the same date"))

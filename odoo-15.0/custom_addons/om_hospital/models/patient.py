@@ -1,5 +1,6 @@
 from datetime import date, datetime
-from odoo import api, models, fields
+from odoo import api, models, fields, _
+from odoo.exceptions import ValidationError
 
 
 class PatientAccount(models.Model):
@@ -19,6 +20,13 @@ class PatientAccount(models.Model):
     appointment_doctor = fields.Char(string="Appointment Doctor")
     image = fields.Image(string="Image")
     tag_ids = fields.Many2many('patient.tag', string='Tags')
+
+    # ---- Constrains in odoo -------
+    @api.constrains('date_of_birth')
+    def _check_date_of_birth(self):
+        for res in self:
+            if res.date_of_birth and res.date_of_birth > fields.Date.today():
+                raise ValidationError(_(" "))
 
     # ------- Override Create method and generate the sequence of Patient -----------
     @api.model

@@ -6,8 +6,10 @@ class PatientAppointment(models.Model):
     _name = 'hospital.appointment'
     _inherit = ['mail.thread', 'mail.activity.mixin']
     _description = 'Hospital Patient Appointment Information'
-    _rec_name = 'patient_id'
+    _rec_name = 'patient_appointment_ids'
 
+
+    patient_appointment_ids = fields.Char(string='Appointment Id')
     patient_id = fields.Many2one('hospital.patient', string='Patient')
     gender = fields.Selection([('male', "Male"), ('female', 'Female')], related='patient_id.gender',
                               help='Enter the gender of a patient')
@@ -33,6 +35,15 @@ class PatientAppointment(models.Model):
     pharmacy_line_ids = fields.One2many('hospital.appointment.line', 'appointment_id', string='Pharmacy Line')
     hide_sales_price = fields.Boolean(string='Hide Sales Price')
 
+    @api.model
+    def create(self, vals_list):
+        vals_list['patient_appointment_ids'] = self.env['ir.sequence'].next_by_code('hospital.appointment')
+        return super(PatientAppointment, self).create(vals_list)
+
+    def write(self, vals):
+        if not self.patient_appointment_ids and not vals.get('patient_appointment_ids'):
+            vals['patient_appointment_ids'] = self.env['ir.sequence'].next_by_code('hospital.appointment')
+        return super(PatientAppointment, self).write(vals)
 
     @api.onchange('patient_id')
     def onchange_patient_id(self):

@@ -37,6 +37,7 @@
         <field name="model">hospital.appointment</field>
         <field name="arch" type="xml">
             <tree decoration-success="state == 'done'" multi_edit="1" sample="1">
+                <field name="patient_appointment_ids"/>
                 <field name="patient_id"/>
                 <field name="doctor_id" widget="many2one_avatar_user"/>
                 <field name="gender" optional="hide"/>
@@ -69,12 +70,16 @@
                     <!-- <button name="action_cancelled_btn" string="Cancelled" type="object" states="draft,in_consultant"/>-->
 
                     <!-- cancel button for wizard popup-->
+
                     <!-- using type="action"-->
+                    <!--                    context="{'default_appointment_id': active_id}"-->
                     <button name="%(om_hospital.action_cancel_appointment)d" string="Cancelled" type="action"
+                        context="{'hide_appointment': 1}"
                             states="draft,in_consultant"/>
+
                     <!--Using type="object" -->
-                    <button name="action_cancellation" string="Cancel" type="object"
-                            states="draft,in_consultant"/>
+                    <!--                    <button name="action_cancellation" string="Cancel" type="object"-->
+                    <!--                            states="draft,in_consultant"/>-->
                     <button name="action_draft_btn" string="Reset as Draft" type="object" states="cancelled"
                             class="oe_highlight"/>
                     <!-- options="{'clickable':' 1'}"-->
@@ -82,7 +87,12 @@
                            statusbar_visible="draft,in_consultant,done"/>
                 </header>
                 <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="patient_appointment_ids"/>
+                        </h1>
 
+                    </div>
                     <field name="priority" widget="priority"/>
                     <group>
                         <group>

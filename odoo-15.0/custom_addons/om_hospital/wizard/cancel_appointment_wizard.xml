@@ -22,6 +22,7 @@
 
                     <group>
                         <group>
+                            <!-- invisible="context.get('hide_appointment')" -->
                             <field name="appointment_id"/>
                             <field name="reason"/>
                             <field name="cancel_date"/>
@@ -33,14 +34,15 @@
 
                     </group>
                 </sheet>
-<!--                &lt;!&ndash;  Adding Chatter &ndash;&gt;-->
-<!--                <div class="oe_chatter">-->
-<!--                    <field name="message_follower_ids" groups="base.group_user"/>-->
-<!--                    <field name="activity_ids"/>-->
-<!--                    <field name="message_ids"/>-->
-<!--                </div>-->
+                <!--                &lt;!&ndash;  Adding Chatter &ndash;&gt;-->
+                <!--                <div class="oe_chatter">-->
+                <!--                    <field name="message_follower_ids" groups="base.group_user"/>-->
+                <!--                    <field name="activity_ids"/>-->
+                <!--                    <field name="message_ids"/>-->
+                <!--                </div>-->
                 <footer>
-                    <button string="Cancel Appointment" name="action_cancel" type="object" class="btn-primary" data-hotkey="q"/>
+                    <button string="Cancel Appointment" name="action_cancel" type="object" class="btn-primary"
+                            data-hotkey="q"/>
                     <button string="Discard" class="btn-secondary" special="cancel" data-hotkey="z"/>
                 </footer>
             </form>
