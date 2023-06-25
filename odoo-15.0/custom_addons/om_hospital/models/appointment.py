@@ -7,10 +7,12 @@ class PatientAppointment(models.Model):
     _inherit = ['mail.thread', 'mail.activity.mixin']
     _description = 'Hospital Patient Appointment Information'
     _rec_name = 'patient_appointment_ids'
+    _order = 'id desc'
 
 
     patient_appointment_ids = fields.Char(string='Appointment Id')
     patient_id = fields.Many2one('hospital.patient', string='Patient', ondelete="cascade")
+    operation = fields.Many2one('hospital.operation', string="Operation")
     gender = fields.Selection([('male', "Male"), ('female', 'Female')], related='patient_id.gender',
                               help='Enter the gender of a patient')
     appointment_time = fields.Datetime(string="Appointment Date")

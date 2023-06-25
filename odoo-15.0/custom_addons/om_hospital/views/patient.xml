@@ -47,9 +47,11 @@
                 <field name="age"/>
                 <field name="gender"/>
                 <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}"/>
+                <field name="appointment_count"  sum="Total Appointment"/>
+
                 <field name="patient_problem"/>
                 <!--                <field name="appointment_doctor"/>-->
-                <field name="appointment_count"/>
+
 
             </tree>
         </field>
@@ -80,12 +82,12 @@
                             <field name="date_of_birth"/>
                             <field name="age"/>
 
-                            <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}"/>
+                            <field name="tag_ids" widget="many2many_checkboxes" options="{'color_field': 'color'}"/>
                             <field name="appointment_count"/>
 
                         </group>
                         <group>
-                            <field name="gender"/>
+                            <field name="gender" widget="radio"/>
                             <field name="patient_problem"/>
                             <field name="active" invisible="1"/>
                             <!--<field name="appointment_id"/>-->

@@ -63,10 +63,10 @@
                         class="fa fa-times btn-danger"
                         context="{'hide_appointment': 1}"/>
 
-<!--                <groupby name="patient_id">-->
-<!--                    <button name="action_test" string="Click Me" type="object" />-->
-<!--                    <button name="edit" string="Edit" type="edit" />-->
-<!--                </groupby>-->
+                <groupby name="patient_id">
+                    <button name="action_test" string="Click Me" type="object" class="oe_highlight"/>
+                    <button name="edit" string="Edit" type="edit" />
+                </groupby>
 
             </tree>
         </field>
@@ -114,10 +114,11 @@
                     <field name="priority" widget="priority"/>
                     <group>
                         <group>
-                            <field name="patient_id"/>
+                            <field name="patient_id" widget="selection"/>
                             <field name="gender"/>
                             <field name="age"/>
-                            <field name="reference"/>
+                            <field name="reference" readonly="1" force_save="1"/>
+                            <field name="operation"/>
                             <field name="hide_sales_price" groups="base.group_no_one"/>
                         </group>
                         <group>
