@@ -1,5 +1,21 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
+
+    <!--     <record id="action_mark_as_done" model="ir.actions.server">-->
+    <!--            <field name="name">Mark as Done</field>-->
+    <!--            <field name="type">ir.actions.server</field>-->
+    <!--            <field name="model_id" ref="model_hospital_appointment" />-->
+    <!--            <field name="binding_model_id" ref="model_ir_module_module" />-->
+    <!--            <field name="state">code</field>-->
+    <!--            <field name="code">-->
+    <!--                for record in records:-->
+    <!--                    if record.state == 'in_consultant':-->
+    <!--                        record.action_done_btn()-->
+
+
+    <!--            </field>-->
+    <!--        </record>-->
+
     <!--    Create search View -->
     <record id="view_hospital_appointment_search" model="ir.ui.view">
         <field name="name">hospital.appointment.search</field>
@@ -31,6 +47,21 @@
         </field>
     </record>
 
+    <!--calendar view-->
+    <record id="view_hospital_appointment_calendar" model="ir.ui.view">
+        <field name="name">hospital.appointment.calendar</field>
+        <field name="model">hospital.appointment</field>
+        <field name="arch" type="xml">
+            <calendar string="Patient Appointment" date_start="appointment_time" mode="month"  color="state" hide_time="True"
+                      event_open_popup="True" event_limit="5"
+                      form_view_id="%(om_hospital.view_hospital_appointment_form)d">
+                    <field name="patient_id" filters="1" avatar_field="image"/>
+                    <field name="state"  filters="1" />
+                </calendar>
+
+        </field>
+    </record>
+
     <!--    create Tree View -->
     <record id="view_hospital_appointment_tree" model="ir.ui.view">
         <field name="name">hospital.appointment.tree</field>
@@ -56,16 +87,19 @@
 
                 <button name="action_done_btn" type="object"
                         attrs="{'invisible': [('state', '!=', 'in_consultant')]}"
-                        class="fa fa-check btn-success"/>
+                        class="fa fa-check btn-success"
+                />
 
                 <button name="%(om_hospital.action_cancel_appointment)d" type="action"
                         attrs="{'invisible': [('state', 'not in', ('draft','in_consultant'))]}"
                         class="fa fa-times btn-danger"
-                        context="{'hide_appointment': 1}"/>
+                        context="{'hide_appointment': 1}"
+                />
+                <field name="progress" widget="progressbar"/>
 
                 <groupby name="patient_id">
                     <button name="action_test" string="Click Me" type="object" class="oe_highlight"/>
-                    <button name="edit" string="Edit" type="edit" />
+                    <button name="edit" string="Edit" type="edit"/>
                 </groupby>
 
             </tree>
@@ -137,9 +171,15 @@
                     </group>
 
                     <notebook>
+                        <page string="Progress" name="progress">
+                            <field name="progress" widget="gauge"
+                                   options="{'style': 'width:100px; height:100px;'}">
+                            </field>
+                        </page>
                         <page string="Prescription" name="prescription">
                             <field name="prescription" placeholder="Write Patient Prescription"
-                                   options="{'collaborative': true, 'resizable': true}"></field>
+                                   options="{'collaborative': true, 'resizable': true}">
+                            </field>
                         </page>
                         <page string="Patient Test Report" name="patient_test_report"></page>
                     </notebook>
@@ -182,7 +222,7 @@
         <field name="name">Appointment</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">hospital.appointment</field>
-        <field name="view_mode">tree,form,activity</field>
+        <field name="view_mode">tree,form,activity,calendar</field>
         <field name="context">{}</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">

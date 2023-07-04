@@ -30,23 +30,30 @@ class PatientAccount(models.Model):
         ('single', 'Single'),
     ], string="Marital Status", tracking=True)
     partner_name = fields.Char(string='Partner Name')
-
-
+    is_birthday = fields.Boolean(string="Birthday ?", compute="_compute_is_birthday")
+    phone = fields.Char(string='Phone')
+    email = fields.Char(string='Email')
+    website = fields.Char(string='Website')
 
     @api.depends('appointment_id')
     def _compute_appointment_count(self):
-        for res in self:
-            res.appointment_count = self.env['hospital.appointment'].search_count([('patient_id', '=', res.id)])
+
+        appointment_group = self.env['hospital.appointment'].read_group(domain=[('state', '=', 'done')], fields=['patient_id'],
+                                                                        groupby=['patient_id'])
+        for appointment in appointment_group:
+            patient_id = appointment.get('patient_id')[0]
+            patient_record = self.browse(patient_id)
+            patient_record.appointment_count = appointment['patient_id_count']
+            self -= patient_record
+        self.appointment_count = 0
 
     # def _compute_appointment_doctor(self):
     #     for res in self:
     #         res.appointment_doctor = self.env['hospital.appointment'].search_name([('patient_id', '=', res.id)])
 
-
-
-        # for i in self.appointment_id:
-        #     self.appointment_doctor = i.doctor_id
-        # self.appointment_id = self.appointment_id.doctor_id
+    # for i in self.appointment_id:
+    #     self.appointment_doctor = i.doctor_id
+    # self.appointment_id = self.appointment_id.doctor_id
 
     # ---- Constrains in odoo -------
     @api.constrains('date_of_birth')
@@ -62,13 +69,11 @@ class PatientAccount(models.Model):
         vals_list['reference'] = self.env['ir.sequence'].next_by_code('hospital.patient')
         return super(PatientAccount, self).create(vals_list)
 
-
     # -------Override write the method-----------
     def write(self, vals):
         if not self.reference and not vals.get('ref'):
             vals['reference'] = self.env['ir.sequence'].next_by_code('hospital.patient')
         return super(PatientAccount, self).write(vals)
-
 
     @api.depends('date_of_birth')
     def _compute_age(self):
@@ -83,12 +88,12 @@ class PatientAccount(models.Model):
     @api.ondelete(at_uninstall=False)
     def _check_appointment(self):
         for rec in self:
-           if rec.appointment_id:
-               raise ValidationError(_("You cannot delete patient Information"))
+            if rec.appointment_id:
+                raise ValidationError(_("You cannot delete patient Information"))
 
     # ----77. Name get function----
     def name_get(self):
-        patient_list=[]
+        patient_list = []
         for record in self:
             name = record.reference + '-' + record.name
             patient_list.append((record.id, name))
@@ -101,4 +106,14 @@ class PatientAccount(models.Model):
     def _inverse_compute_age(self):
         today = date.today()
         for rec in self:
-            rec.date_of_birth = today - relativedelta.relativedelta(years = rec.age)
+            rec.date_of_birth = today - relativedelta.relativedelta(years=rec.age)
+
+    @api.depends('date_of_birth')
+    def _compute_is_birthday(self):
+        is_birthday = False
+        for rec in self:
+            if rec.date_of_birth:
+                today = date.today()
+                if today.day == rec.date_of_birth.day and today.month == rec.date_of_birth.month:
+                    is_birthday = True
+        self.is_birthday = is_birthday
