@@ -52,12 +52,13 @@
         <field name="name">hospital.appointment.calendar</field>
         <field name="model">hospital.appointment</field>
         <field name="arch" type="xml">
-            <calendar string="Patient Appointment" date_start="appointment_time" mode="month"  color="state" hide_time="True"
+            <calendar string="Patient Appointment" date_start="appointment_time" mode="month" color="state"
+                      hide_time="True"
                       event_open_popup="True" event_limit="5"
                       form_view_id="%(om_hospital.view_hospital_appointment_form)d">
-                    <field name="patient_id" filters="1" avatar_field="image"/>
-                    <field name="state"  filters="1" />
-                </calendar>
+                <field name="patient_id" filters="1" avatar_field="image"/>
+                <field name="state" filters="1"/>
+            </calendar>
 
         </field>
     </record>
@@ -67,7 +68,8 @@
         <field name="name">hospital.appointment.tree</field>
         <field name="model">hospital.appointment</field>
         <field name="arch" type="xml">
-            <tree decoration-success="state == 'done'" multi_edit="1" sample="1" export_xlsx="0">
+            <tree decoration-success="state == 'done'" decoration-danger="state == 'cancelled'"
+                  decoration-info="state == 'in_consultant'" multi_edit="1" sample="1" export_xlsx="0">
                 <header>
                     <button name="action_in_consultant_btn" string="In Consultant" type="object" class="oe_highlight"/>
                 </header>
@@ -78,6 +80,8 @@
                 <field name="age"/>
                 <field name="reference" optional="hide"/>
                 <field name="appointment_time"/>
+                <field name="currency_id" invisible="1"/>
+                <field name="total_price" widget="monetary"/>
                 <field name="booking_date" optional="show"/>
                 <field name="activity_ids" widget="list_activity"/>
                 <!-- badge widget decoration -->
@@ -95,6 +99,8 @@
                         class="fa fa-times btn-danger"
                         context="{'hide_appointment': 1}"
                 />
+                <field name="currency_id" invisible="1"/>
+                <field name="total_price" decoration-bf="1"/>
                 <field name="progress" widget="progressbar"/>
 
                 <groupby name="patient_id">
@@ -114,6 +120,9 @@
             <form>
                 <!--StatusBar-->
                 <header>
+
+                    <button name="action_whatsapp_btn" icon="fa-whatsapp" type="object"
+                            class="oe_highlight"/>
                     <!--controlling statusbar using buttons-->
                     <button name="action_in_consultant_btn" string="In Consultant" type="object" states="draft"
                             class="oe_highlight"/>
@@ -153,12 +162,18 @@
                             <field name="age"/>
                             <field name="reference" readonly="1" force_save="1"/>
                             <field name="operation"/>
+                            <field name="total_price" widget="monetary"/>
                             <field name="hide_sales_price" groups="base.group_no_one"/>
                         </group>
                         <group>
                             <field name="appointment_time"/>
                             <field name="booking_date"/>
                             <field name="doctor_id" widget="many2one_avatar"/>
+
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="currency_id" groups="base.group_multi_currency"/>
+
+
                             <button name="test_action" string="Object Button" class="oe_highlight" type="object"
                                     groups="base.group_no_one"/>
                             <button name="%(om_hospital.action_hospital_patient)d" string="Action Button"
@@ -189,10 +204,14 @@
                             <field name="pharmacy_line_ids">
                                 <tree editable="bottom">
                                     <field name="product_id"/>
-                                    <field name="price_unit"
+                                    <field name="price_unit" widget="monetary"
                                            attrs="{'column_invisible':[('parent.hide_sales_price', '=', True)]}"/>
                                     <field name="quantity"/>
+                                    <field name="company_currency_id" invisible="1"/>
+                                    <field name="price_subtotal" sum="total"/>
+
                                 </tree>
+
                                 <form>
                                     <group>
                                         <field name="product_id"/>

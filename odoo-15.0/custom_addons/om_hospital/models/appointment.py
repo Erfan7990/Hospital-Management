@@ -11,7 +11,6 @@ class PatientAppointment(models.Model):
     _rec_name = 'patient_appointment_ids'
     _order = 'id desc'
 
-
     patient_appointment_ids = fields.Char(string='Appointment Id')
     patient_id = fields.Many2one('hospital.patient', string='Patient', ondelete="cascade")
     operation = fields.Many2one('hospital.operation', string="Operation")
@@ -40,6 +39,23 @@ class PatientAppointment(models.Model):
     hide_sales_price = fields.Boolean(string='Hide Sales Price')
     progress = fields.Integer(string="Progress", compute='_compute_progress')
 
+    company_id = fields.Many2one('res.company', string='Company', default=lambda self: self.env.company)
+    currency_id = fields.Many2one('res.currency', related='company_id.currency_id')
+    # total_price = fields.
+    total_price = fields.Monetary(string="Total", compute='_compute_total_price', store=True)
+
+
+
+    @api.depends('pharmacy_line_ids')
+    def _compute_total_price(self):
+
+        for rec in self:
+            total = 0.0
+            for i in rec.pharmacy_line_ids:
+                total += i.price_unit * i.quantity
+
+            rec.total_price = total
+
     @api.model
     def create(self, vals_list):
         vals_list['patient_appointment_ids'] = self.env['ir.sequence'].next_by_code('hospital.appointment')
@@ -58,9 +74,36 @@ class PatientAppointment(models.Model):
     def onchange_patient_age(self):
         self.age = self.patient_id.age
 
-
     def test_action(self):
         print('Button Clicked............')
+        # URL action.........
+        return {
+            'type': 'ir.actions.act_url',
+            'target': 'new',
+            'url': 'https://www.odoo.com/',
+        }
+
+    # Whatsapp btn
+    def action_whatsapp_btn(self):
+        if not self.patient_id.phone:
+            raise ValidationError(_('Missing your whatsapp number'))
+        message = 'Hi %s, your appointment number is %s' % (self.patient_id.name, self.patient_appointment_ids)
+        whatsapp_url = 'https://api.whatsapp.com/send?phone=%s&test=%s' % (self.patient_id.phone, message)
+        return {
+            'type': 'ir.actions.act_url',
+            'target': 'new',
+            'url': whatsapp_url,
+        }
+
+    # Creating button to control statusbar
+    def action_in_consultant_btn(self):
+        for rec in self:
+            if rec.state == 'draft':
+                rec.state = 'in_consultant'
+
+    def action_done_btn(self):
+        for rec in self:
+            rec.state = 'done'
         return {
             'effect': {
                 'fadeout': 'slow',
@@ -69,14 +112,6 @@ class PatientAppointment(models.Model):
             }
         }
 
-    # Creating button to control statusbar
-    def action_in_consultant_btn(self):
-        for rec in self:
-            if rec.state == 'draft':
-                rec.state = 'in_consultant'
-    def action_done_btn(self):
-        for rec in self:
-            rec.state = 'done'
     def action_cancelled_btn(self):
         for rec in self:
             rec.state = 'cancelled'
@@ -84,7 +119,6 @@ class PatientAppointment(models.Model):
     def action_cancellation(self):
         action = self.env.ref('om_hospital.action_cancel_appointment').read()[0]
         return action
-
 
     def action_draft_btn(self):
         for rec in self:
@@ -117,5 +151,15 @@ class Appointment_pharmacy_Lines(models.Model):
     price_unit = fields.Float(related="product_id.lst_price")
     quantity = fields.Integer(string='Quantity', default='1')
     appointment_id = fields.Many2one('hospital.appointment', string='Appointment')
+    company_currency_id = fields.Many2one('res.currency', related='appointment_id.currency_id')
+    price_subtotal = fields.Monetary(string='Subtotal', compute='_compute_price_subtotal',
+                                     currency_field='company_currency_id', store=True)
+    
 
+
+    @api.depends('price_unit', 'quantity')
+    def _compute_price_subtotal(self):
+        for rec in self:
+            rec.price_subtotal = rec.price_unit * rec.quantity
+            print("-->>", rec.price_subtotal)
 
