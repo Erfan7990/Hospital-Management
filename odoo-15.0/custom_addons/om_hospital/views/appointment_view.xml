@@ -80,8 +80,7 @@
                 <field name="age"/>
                 <field name="reference" optional="hide"/>
                 <field name="appointment_time"/>
-                <field name="currency_id" invisible="1"/>
-                <field name="total_price" widget="monetary"/>
+              
                 <field name="booking_date" optional="show"/>
                 <field name="activity_ids" widget="list_activity"/>
                 <!-- badge widget decoration -->
