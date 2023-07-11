@@ -126,6 +126,28 @@
                             <field name="website" widget="url"/>
                         </group>
                     </group>
+
+
+                     <notebook>
+                        <page string="Appointment Details" name="appointment">
+                            <field name="appointment_id" >
+                                <tree>
+                                    <field name="patient_appointment_ids" />
+                                    <field name="operation" />
+                                    <field name="gender" />
+                                    <field name="age" />
+                                    <field name="appointment_time" />
+                                    <field name="doctor_id" />
+                                    <field name="booking_date" />
+                                    <field name="reference" />
+                                    <field name="state" />
+
+
+                                </tree>
+                            </field>
+                        </page>
+
+                    </notebook>
                 </sheet>
                 <!--  Adding Chatter -->
                 <div class="oe_chatter">

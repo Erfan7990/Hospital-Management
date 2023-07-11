@@ -19,6 +19,7 @@ class PatientAccount(models.Model):
     gender = fields.Selection([('male', "Male"), ('female', 'Female')])
     patient_problem = fields.Char(string='Patient Problem')
     active = fields.Boolean(string='Active', default='True')
+    # appointment = fields.Many2one('hospital.appointment')
     appointment_id = fields.One2many('hospital.appointment', 'patient_id', string='Appointment')
     appointment_count = fields.Integer(string='Appointment Count', compute='_compute_appointment_count', store=True)
     # appointment_doctor = fields.Char(string="Appointment Doctor",  compute="_compute_appointment_doctor", store=True)
